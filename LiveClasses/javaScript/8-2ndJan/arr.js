@@ -1,14 +1,19 @@
 /**
- *
+ * slice()
+ * repeat()
  * includes()
  * indexOf()
  * lastIndexOf()
  * array ---> Push() , Pop() , shift() , unshift() , sort() , reverse()
  * length---property
+ * slice()
+ * Array.isArray(arr) ---> returns true or false
  *
  *
  * method --behaviour
  * property--information
+ *
+ *
  *
  */
 
@@ -112,6 +117,8 @@ console.log("------");
  */
 
 console.log("------");
+
+// str.split('').filter(el=> el%2 ===0 || 'aeiou'.includes(el))
 
 for (i = 0; i <= str1.length - 1; i = i + 2) {
     if ("aeiou".includes(str1[i])) console.log(str1[i]);
