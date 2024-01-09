@@ -60,3 +60,34 @@ function expensiveOrder(order, amount) {
     return output;
 }
 console.log(expensiveOrder({ a: 3000, b: 200, c: 1050 }, 1000));
+
+/**
+ * invert({ "z": "q", "w": "f" })
+➞ { "q": "z", "f": "w" }
+
+invert({ "a": 1, "b": 2, "c": 3 })
+➞ { 1: "a", 2: "b", 3: "c" }
+
+invert({ "zebra": "koala", "horse": "camel" })
+➞ { "koala": "zebra", "camel": "horse" }
+ */
+
+function invert(obj) {
+    let result = {};
+    for (let i in obj) {
+        result[obj[i]] = i;
+    }
+    return result;
+}
+
+console.log(invert({ zebra: "koala", horse: "camel" }));
+
+function toObj(arr) {
+    const output = [];
+    arr.forEach((element) => {
+        output.push({ [element]: element.charCodeAt() });
+    });
+    return output;
+}
+
+console.log(toObj(["a", "b", "c"]));

@@ -11,3 +11,7 @@ function frequency(str) {
 }
 
 console.log(frequency("ddcccttd")); // {d:3,c:3,t:2}
+
+//find all the repeated characters
+// 'dcctt' --- ['c','t']
+// find all the nonrepeating characters
