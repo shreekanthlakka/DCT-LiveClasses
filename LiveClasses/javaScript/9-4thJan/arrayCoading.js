@@ -56,6 +56,8 @@ const res = arrr.reduce((acc, val) => {
  *
  */
 
+
+
 function mirror(arr) {
     const res = [];
     arr.forEach((element) => res.push(element));
