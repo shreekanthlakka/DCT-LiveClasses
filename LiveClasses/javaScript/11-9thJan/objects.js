@@ -38,15 +38,15 @@ function objectToArray(obj) {
 
 // console.log(objectToArray(object1));
 
-// function expensiveOrder(order, amount) {
-//     const output = {};
-//     for (const key in order) {
-//         if (order[key] > amount) {
-//             output[key] = order[key];
-//         }
-//     }
-//     return output;
-// }
+function expensiveOrder(order, amount) {
+    const output = {};
+    for (const key in order) {
+        if (order[key] > amount) {
+            output[key] = order[key];
+        }
+    }
+    return output;
+}
 
 // console.log(expensiveOrder({ a: 3000, b: 200, c: 1050 }, 1000));
 
@@ -74,13 +74,29 @@ invert({ "zebra": "koala", "horse": "camel" })
 
 function invert(obj) {
     let result = {};
-    for (let i in obj) {
-        result[obj[i]] = i;
+    for (let key in obj) {
+        result[obj[key]] = key;
     }
     return result;
 }
 
 console.log(invert({ zebra: "koala", horse: "camel" }));
+
+/**
+ * 
+ *## Characters and ASCII Code
+ *Write a function that transforms an array of characters into an array of objects, where:
+
+ *The keys are the characters themselves.
+ *The values are the ASCII codes of those characters.
+ *Examples*
+
+ *toObj(["a", "b", "c"]) ➞ [{a: 97}, {b: 98}, {c: 99}]
+
+ *toObj(["z"]) ➞ [{z: 122}]
+
+ *toObj([]) ➞ []
+ */
 
 function toObj(arr) {
     const output = [];
