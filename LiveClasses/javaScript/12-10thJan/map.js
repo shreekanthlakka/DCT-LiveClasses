@@ -1,6 +1,7 @@
 /**
  *
  * transfer the array into new array
+ *
  */
 
 const prices = [125, 135, 145, 155];

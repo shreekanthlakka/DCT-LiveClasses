@@ -32,6 +32,8 @@ console.log(n);
 // ES6 future for above is find() method
 //
 
+//find() ---> find() findes in an array of objects based on CONDITION
+
 console.log(
     "find method ",
     prices.find((ele) => ele > 135)
