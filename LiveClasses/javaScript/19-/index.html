@@ -3,37 +3,44 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
+        <title>Exam Result Website</title>
     </head>
     <body>
         <h1>Exam results</h1>
-        <form onsubmit="handleSubmit(e)">
-            <label for="roll-no">Enter ur Roll no</label>
-            <input id="roll-no" type="text" />
+        <form onsubmit="handleSubmit(event)">
+            <label for="rollNo">Enter ur Roll no</label>
+            <input id="rollNo" type="text" /><br />
             <input type="submit" />
         </form>
+        <p id="errMsg"></p>
+        <h2 id="resultInfo"></h2>
         <script>
-            function handleSubmit(e) {
-                e.preventDefault();
-                alert("sree");
-                console.log(e);
-                const rollno = e.target[0].value;
+            function handleSubmit(event) {
+                event.preventDefault();
+                const errMsg = document.getElementById("errMsg");
+                const resultInfo = document.getElementById("resultInfo");
+                const rollno = event.target[0].value;
 
                 //xhr object
                 //XMLHttpRequest
                 const xhr = new XMLHttpRequest();
                 xhr.open(
                     "GET",
-                    `https://result-server.onrender.com/api/result/${rollno}`
+                    `https://result-server.onrender.com/api/results/${rollno}`
                 );
                 xhr.send();
                 //onload method gets called once we receive responce from the server
 
                 xhr.onload = function () {
                     //the responce from the server is inside responseText
-                    console.log(xhr.responseText);
-                    var data = JSON.parse(xhr.responseText);
-                    console.log(data);
+                    const result = JSON.parse(xhr.responseText);
+                    if (Object.keys(result).length === 0) {
+                        errMsg.innerText = "Invalid Roll No.";
+                        resultInfo.innerText = "";
+                    } else {
+                        resultInfo.innerText = `Result - ${result.result}`;
+                        errMsg.innerText = "";
+                    }
                 };
             }
         </script>
