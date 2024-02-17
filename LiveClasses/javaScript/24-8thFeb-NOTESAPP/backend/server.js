@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const app = express();
 const dotenv = require("dotenv");
 dotenv.config();
@@ -8,49 +9,72 @@ app.use((req, res, next) => {
     next();
 });
 
-let notesDb = [
-    { id: 1, content: "This is a note" },
-    { id: 2, content: "This is 2 note" },
-    { id: 3, content: "This is 3 note" },
-    { id: 4, content: "This is 4 note" },
-    { id: 5, content: "This is 5 note" },
-];
+mongoose
+    .connect(process.env.DB_URL)
+    .then((obj) => {
+        console.log("connected to db", obj.connection.host);
+    })
+    .catch((err) => console.log(err));
 
-app.get("/notes", (req, res) => {
-    res.json({
-        success: true,
-        data: notesDb,
-    });
+const notesSchema = new mongoose.Schema({
+    note: String,
 });
 
-app.post("/notes/new", (req, res) => {
+const Notes = mongoose.model("Note", notesSchema);
+
+app.get("/notes", async (req, res) => {
+    try {
+        const notes = await Notes.find();
+        res.status(200).json({
+            success: true,
+            data: notes,
+        });
+    } catch (error) {
+        res.status(404).json({
+            success: false,
+            message: error.message,
+        });
+    }
+});
+
+app.post("/notes/new", async (req, res) => {
     const { note } = req.body;
 
-    const newobj = {
-        id: Date.now(),
-        note,
-    };
-    notesDb.push(newobj);
-
-    res.json({
-        success: true,
-        data: newobj,
-    });
-});
-
-app.delete("/notes/:id", (req, res) => {
-    const { id } = req.params;
-    // notesDb = notesDb.filter((note) => note.id !== id);
-    const index = notesDb.findIndex((ele) => ele.id == id);
-    if (index === -1) {
-        res.status(404).send("record not found");
+    try {
+        if (!note) return;
+        const newNotes = {
+            note,
+        };
+        const creatednote = await Notes.create(newNotes);
+        if (!creatednote) throw Error("Failed to create the note");
+        res.status(200).json({
+            success: true,
+            data: creatednote,
+        });
+    } catch (error) {
+        res.status(400).json({
+            success: false,
+            message: error.message,
+        });
     }
-    const deleatednotes = notesDb.splice(index, 1);
-    res.send(deleatednotes[0]).json({
-        success: true,
-    });
 });
 
-app.listen(process.env.PORT || 5000, () =>
+app.delete("/notes/:id", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const note = await Notes.findOneAndDelete(id);
+        if (!note) throw new Error("no note with this id");
+        res.status(200).json({
+            success: true,
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message,
+        });
+    }
+});
+
+app.listen(process.env.PORT || 6000, () =>
     console.log(`Server is running on ${process.env.PORT} PORT`)
 );
