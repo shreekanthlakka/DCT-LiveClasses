@@ -132,6 +132,15 @@ const expenceValidationSchema = {
     },
 };
 
+const idValidationSchema = {
+    id: {
+        in: ["params"],
+        isMongoId: {
+            errorMessage: "Invalid MongoID",
+        },
+    },
+};
+
 //create a request handler to return /all-expenses
 app.get("/all-expenses", (req, res) => {
     Expense.find()
@@ -171,7 +180,11 @@ app.post("/new-expenses", checkSchema(expenceValidationSchema), (req, res) => {
 
 //find category by using its id
 
-app.get("/single-category/:id", (req, res) => {
+app.get("/single-category/:id", checkSchema(idValidationSchema), (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ success: false, error: error.array() });
+    }
     const id = req.params.id;
     Category.findById(id)
         .then((category) => {
@@ -188,34 +201,51 @@ app.get("/single-category/:id", (req, res) => {
 
 //find the id and update it
 
-app.put("/update-category/:id", (req, res) => {
-    const id = req.params.id;
-    const body = req.body;
-    Category.findByIdAndUpdate(id, body, { new: true })
-        .then((category) => {
-            if (!category) {
-                return res.status(404).json({});
-            }
-            res.json(category);
-        })
+app.put(
+    "/update-category/:id",
+    checkSchema(idValidationSchema),
+    checkSchema(categoryValidationSchema),
+    (req, res) => {
+        const error = validationResult(req);
+        if (!error.isEmpty()) {
+            return res.status(400).json({ errors: error.array() });
+        }
+        const id = req.params.id;
+        const body = req.body;
+        Category.findByIdAndUpdate(id, body, { new: true })
+            .then((category) => {
+                if (!category) {
+                    return res.status(404).json({});
+                }
+                res.json(category);
+            })
 
-        .catch((err) => {
-            res.json(err);
-        });
-});
+            .catch((err) => {
+                res.status(500).json({ error: "Internal server error" });
+            });
+    }
+);
 
 //deleting record
 
-app.delete("/removing-category/:id", (req, res) => {
-    const id = req.params.id;
-    Category.findByIdAndDelete(id)
-        .then((category) => {
-            if (!category) {
-                return res.status(404).json({});
-            }
-            res.json(category);
-        })
-        .catch((err) => {
-            res.status(500).json({ error: "internal server error" });
-        });
-});
+app.delete(
+    "/removing-category/:id",
+    checkSchema(idValidationSchema),
+    (req, res) => {
+        const error = validationResult(req);
+        if (!error.isEmpty()) {
+            return res.status(400).json({ errors: error.array() });
+        }
+        const id = req.params.id;
+        Category.findByIdAndDelete(id)
+            .then((category) => {
+                if (!category) {
+                    return res.status(404).json({});
+                }
+                res.json(category);
+            })
+            .catch((error) => {
+                res.status(500).json({ error: "internal server error" });
+            });
+    }
+);
