@@ -11,9 +11,9 @@ import {
 } from "../controllers/caterogies.controller.js";
 import { categoryValidationSchema } from "../validationSchema/caregory.validationSchema.js";
 
-categoriesRouter.route("/all").get(getallCategories);
+categoriesRouter.route("/").get(getallCategories);
 categoriesRouter
-    .route("/new")
+    .route("/")
     .post(checkSchema(categoryValidationSchema), createCategory);
 categoriesRouter
     .route("/:id")

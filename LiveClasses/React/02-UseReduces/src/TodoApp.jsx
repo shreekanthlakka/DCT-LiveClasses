@@ -1,4 +1,7 @@
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
+
+const localDate = localStorage.getItem("todo");
+const initialState = localDate ? JSON.parse(localDate) : [];
 
 function reducer(state, action) {
     switch (action.type) {
@@ -19,7 +22,7 @@ function reducer(state, action) {
 
 function TodoApp() {
     const [input, setInput] = useState("");
-    const [todos, dispatch] = useReducer(reducer, []);
+    const [todos, dispatch] = useReducer(reducer, initialState);
     function handleAddClick(e) {
         e.preventDefault();
         if (!input) return;
@@ -31,6 +34,9 @@ function TodoApp() {
         dispatch({ type: "addTodo", payload: newTodo });
         setInput("");
     }
+    useEffect(() => {
+        localStorage.setItem("todo", JSON.stringify(todos));
+    }, [todos]);
     return (
         <div>
             <h1>Todo App using useReducer</h1>
