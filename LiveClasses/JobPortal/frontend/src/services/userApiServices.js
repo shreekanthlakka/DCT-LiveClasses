@@ -30,19 +30,10 @@ const registerApi = async (username, email, password, role) => {
             },
             body: JSON.stringify({ username, email, password, role }),
         });
-        if (!res.ok) {
-            throw new Error(
-                JSON.stringify({
-                    message: "Failed to create an account",
-                    err: res,
-                })
-            );
-        }
         const data = await res.json();
-        console.log("data in api =>", data);
         return data;
     } catch (error) {
-        console.log("errors in api req => ", JSON.parse(error));
+        console.log("errors in api req => ", error);
     }
 };
 

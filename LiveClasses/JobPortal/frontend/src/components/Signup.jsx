@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { registerApi } from "../services/userApiServices";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import validator from "validator";
 
 const Form = styled.form`
     display: flex;
@@ -39,16 +40,39 @@ const initialState = {
 function Signup() {
     const [formData, setFormDate] = useState(initialState);
     const [errors, setErrors] = useState();
+    const [clientErrors, setClientErrors] = useState({});
+    const cliErrors = {};
     const navigate = useNavigate();
 
     function handleChange(e) {
         if (e.target.name === "") return;
         setFormDate({ ...formData, [e.target.name]: e.target.value });
+        setErrors([]);
     }
 
-    function handleSubmit(e) {
-        e.preventDefault();
-        console.log(formData);
+    const runValidations = () => {
+        if (formData.username.trim().length === 0) {
+            cliErrors.username = "Username is required";
+        }
+        if (formData.email.trim().length === 0) {
+            cliErrors.email = "email is required";
+        } else if (!validator.isEmail(formData.email)) {
+            cliErrors.email = "invalid email format";
+        }
+        if (formData.password.trim().length === 0) {
+            cliErrors.password = "password is required";
+        } else if (
+            formData.password.trim().length <= 5 ||
+            formData.password.trim().length >= 128
+        ) {
+            cliErrors.password = "password should be 5-128 charactors";
+        }
+        if (formData.role.trim().length === 0) {
+            cliErrors.role = "role is required";
+        }
+    };
+
+    const apicall = () => {
         registerApi(
             formData.username,
             formData.email,
@@ -59,6 +83,13 @@ function Signup() {
                 if (res.success) {
                     toast.success("user created sucessfully");
                     navigate("/login");
+                    setErrors([]);
+                } else if (res.success === false) {
+                    if (typeof res.errors === String) {
+                        setErrors([res.errors]);
+                    } else {
+                        setErrors(res.errors);
+                    }
                 }
             })
             .catch((err) => {
@@ -66,7 +97,25 @@ function Signup() {
                 if (typeof err === "string") setErrors(err.message);
                 toast.error(err.message);
             });
+    };
+
+    function handleSubmit(e) {
+        e.preventDefault();
+        runValidations();
+        if (Object.keys(cliErrors).length === 0) {
+            apicall();
+        } else {
+            setClientErrors(cliErrors);
+        }
     }
+
+    const errorMessages = (field) => {
+        const err = errors?.find((ele) => ele.path === field);
+        if (!err) {
+            return null;
+        }
+        return <span style={{ color: "red", fontWeight: 600 }}>{err.msg}</span>;
+    };
 
     return (
         <div>
@@ -81,6 +130,8 @@ function Signup() {
                         onChange={handleChange}
                     />
                 </Row>
+                {errorMessages("username")}
+                {clientErrors.username && <span>{clientErrors.username}</span>}
                 <Row>
                     <label htmlFor="email">email</label>
                     <input
@@ -91,6 +142,9 @@ function Signup() {
                         onChange={handleChange}
                     />
                 </Row>
+                {errorMessages("email")}
+                {clientErrors.email && <span>{clientErrors.email}</span>}
+
                 <Row>
                     <label htmlFor="password">password</label>
                     <input
@@ -100,6 +154,10 @@ function Signup() {
                         value={formData.password}
                         onChange={handleChange}
                     />
+                    {errorMessages("password")}
+                    {clientErrors.password && (
+                        <span>{clientErrors.password}</span>
+                    )}
                 </Row>
                 <Row>
                     <label htmlFor="role">role:</label>
@@ -113,6 +171,8 @@ function Signup() {
                         <option value="candidate">Candiate</option>
                         <option value="recruiter">Recuiter</option>
                     </select>
+                    {errorMessages("role")}
+                    {clientErrors.role && <span>{clientErrors.role}</span>}
                 </Row>
                 <button type="submit">Register</button>
             </Form>

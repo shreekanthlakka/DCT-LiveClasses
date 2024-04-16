@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useUser } from "../contexts/userContext";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import validator from "validator";
 
 const Form = styled.form`
     display: flex;
@@ -30,28 +31,55 @@ const Row = styled.div`
 `;
 
 function Login() {
+    const navigate = useNavigate();
     const { login, isLoading, errors } = useUser();
     const [formData, setFormData] = useState({
         email: "",
         password: "",
     });
-    const navigate = useNavigate();
+    const [clientErrors, setClientErrors] = useState({});
+    const cliErrors = {};
 
-    function handleSubmit(e) {
-        e.preventDefault();
-        console.log("Loggin data", formData);
+    const runClientValidations = () => {
+        if (formData.email.trim().length === 0) {
+            cliErrors.email = "email is required";
+        } else if (validator.isEmail(formData.email) === false) {
+            cliErrors.email = "Invalid email format";
+        }
+
+        if (formData.password.trim().length === 0) {
+            cliErrors.password = "password is required";
+        } else if (
+            formData.password.trim().length < 5 ||
+            formData.password.trim().length > 128
+        ) {
+            cliErrors.password = "password should be 5-128 charactors";
+        }
+    };
+
+    const apicall = () => {
         login(formData.email, formData.password)
             .then((data) => {
                 if (data.success) {
                     toast.success("Logged in sucessfully");
-                    navigate("/dashboard");
                     localStorage.setItem("token", data.session.accessToken);
+                    navigate("/dashboard");
                 }
             })
             .catch((err) => {
                 console.log(err);
                 localStorage.setItem("token", "");
             });
+    };
+
+    function handleSubmit(e) {
+        e.preventDefault();
+        runClientValidations();
+        if (Object.keys(cliErrors).length === 0) {
+            apicall();
+        } else {
+            setClientErrors(cliErrors);
+        }
     }
     return (
         <div>
@@ -67,6 +95,7 @@ function Login() {
                             setFormData({ ...formData, email: e.target.value })
                         }
                     />
+                    {clientErrors.email && <span>{clientErrors.email}</span>}
                 </Row>
                 <Row>
                     <label htmlFor="password">password</label>
@@ -82,6 +111,9 @@ function Login() {
                             })
                         }
                     />
+                    {clientErrors.password && (
+                        <span>{clientErrors.password}</span>
+                    )}
                 </Row>
                 <button type="submit">Login</button>
             </Form>
