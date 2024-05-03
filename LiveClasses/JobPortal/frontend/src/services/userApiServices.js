@@ -20,7 +20,7 @@ const loginApi = async (email, password) => {
 
 // loginApi("one@gmail.com", "123456");
 
-const registerApi = async (username, email, password, role) => {
+const registerApi = async ({ username, email, password, role }) => {
     try {
         const res = await fetch(`${URI}/users/register`, {
             method: "POST",
@@ -37,6 +37,22 @@ const registerApi = async (username, email, password, role) => {
     }
 };
 
+const logoutApi = async () => {
+    try {
+        const res = await fetch(`${URI}/users/logout`, {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-type": "application/json",
+            },
+        });
+        const data = await res.json();
+        return data;
+    } catch (error) {
+        console.log("errors in api req => ", error);
+    }
+};
+
 // registerApi("five", "five@gmail.com", "password", "9000012345");
 
-export { loginApi, registerApi };
+export { loginApi, registerApi, logoutApi };

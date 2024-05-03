@@ -1,6 +1,6 @@
 /*eslint-disable react/prop-types*/
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const URI = `http://jsonplaceholder.typicode.com`;
 
@@ -53,8 +53,12 @@ function Task2() {
                 <button type="submit">Submit</button>
             </form>
 
-            {userId && <UserDetails user={user} isLoading={isLoading} />}
-            {userId && <TodoDetails todos={todos} isLoading={isLoading} />}
+            {Object.keys(user).length > 0 && (
+                <UserDetails user={user} isLoading={isLoading} />
+            )}
+            {todos.length > 0 && (
+                <TodoDetails todos={todos} isLoading={isLoading} />
+            )}
         </div>
     );
 }

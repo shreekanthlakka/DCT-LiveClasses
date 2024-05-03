@@ -15,14 +15,14 @@ router
     .route("/profile")
     .post(
         isLoggedIn,
-        customRole(["recuiter"]),
+        customRole(["recruiter"]),
         checkSchema(recuiterValidationSchema),
         createRecuiterProfile
     )
-    .get(isLoggedIn, customRole(["recuiter"]), getRecuiterProfileDetails)
+    .get(isLoggedIn, customRole(["recruiter"]), getRecuiterProfileDetails)
     .put(
         isLoggedIn,
-        customRole(["recuiter"]),
+        customRole(["recruiter"]),
         body("companyName").exists().notEmpty().trim(),
         body("email")
             .exists()

@@ -67,9 +67,25 @@ const getLoggedInUserDetails = asyncHandler(async (req, res) => {
     if (!user) {
         throw new CustomError(404, "invalid token");
     }
-    res.status(200).json(
-        new CustomResponse(200, "sucessfully got the user details", user)
-    );
+    res.status(200).json({
+        status: 200,
+        data: user,
+        isAuthenticated: true,
+        success: true,
+        message: "Logged in sucessfully",
+    });
+});
+
+const checkEmail = asyncHandler(async (req, res) => {
+    const { email } = req.query;
+    const user = await User.findOne({ email });
+    if (user) {
+        res.status(200).json({
+            isEmailRegistered: true,
+        });
+    } else {
+        res.status(200).json({ isEmailRegistered: false });
+    }
 });
 
 /**
@@ -86,4 +102,11 @@ const adminGetAllUsers = asyncHandler(async (req, res) => {
     res.status(200).json(new CustomResponse(200, "all users", users));
 });
 
-export { register, login, logout, getLoggedInUserDetails, adminGetAllUsers };
+export {
+    register,
+    login,
+    logout,
+    getLoggedInUserDetails,
+    adminGetAllUsers,
+    checkEmail,
+};

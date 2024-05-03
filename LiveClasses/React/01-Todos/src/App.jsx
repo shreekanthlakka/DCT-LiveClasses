@@ -55,6 +55,26 @@ function App() {
                     handleDelete={handleDelete}
                 />
             )}
+            <AddFive />
+        </div>
+    );
+}
+
+function AddFive() {
+    const [count, setCount] = useState(0);
+
+    function handleAddFive() {
+        setCount((prev) => prev + 1);
+        setCount((prev) => prev + 1);
+        setCount((prev) => prev + 1);
+        setCount((prev) => prev + 1);
+        setCount((prev) => prev + 1);
+    }
+
+    return (
+        <div>
+            <p>Count - -- {count}</p>
+            <button onClick={handleAddFive}> Add 5 </button>
         </div>
     );
 }

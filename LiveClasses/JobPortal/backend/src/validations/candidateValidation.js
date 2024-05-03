@@ -1,5 +1,6 @@
 import Candidate from "../models/candidate.model.js";
 import { CustomError } from "../utils/customError.js";
+import User from "../models/user.model.js";
 
 const candidateValidationSchema = {
     userId: {
@@ -45,7 +46,7 @@ const candidateValidationSchema = {
             errorMessage: "Mobile number must be 10 digits long ",
         },
         custom: {
-            option: async function (val) {
+            options: async function (val) {
                 const candidate = await User.findOne({ mobileNumber: val });
                 if (candidate) {
                     throw new CustomError(401, "phone number already used");

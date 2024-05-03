@@ -1,8 +1,9 @@
 import { createContext, useContext, useReducer } from "react";
-import { loginApi } from "../services/userApiServices";
+import { loginApi, logoutApi } from "../services/userApiServices";
 const initialState = {
     user: {},
     isLoading: false,
+    isLoggedIn: false,
     errors: [],
 };
 
@@ -12,10 +13,17 @@ function userReducer(state, action) {
     switch (action.type) {
         case "start":
             return { ...state, isLoading: true, errors: [] };
-        case "fetchData":
-            return { ...state, user: action.payload, isLoading: false };
+        case "LOGIN":
+            return {
+                ...state,
+                user: action.payload,
+                isLoading: false,
+                isLoggedIn: true,
+            };
         case "error":
             return { ...state, errors: action.payload, isLoading: false };
+        case "LOGOUT":
+            return { ...state, user: {}, isLoading: false, isLoggedIn: false };
         case "default":
             return state;
     }
@@ -32,9 +40,22 @@ function UserContextProvider({ children }) {
             dispatch({ type: "start" });
             const user = await loginApi(username, password);
             if (user.success) {
-                dispatch({ type: "fetchData", payload: user.user });
+                dispatch({ type: "LOGIN", payload: user.user });
             }
             return user;
+        } catch (error) {
+            dispatch({ type: "error", payload: error.message });
+        }
+    };
+
+    const logout = async () => {
+        try {
+            dispatch({ type: "start" });
+            const res = await logoutApi();
+            if (res.success) {
+                localStorage.removeItem("token");
+                dispatch({ type: "LOGOUT" });
+            }
         } catch (error) {
             dispatch({ type: "error", payload: error.message });
         }
@@ -45,6 +66,7 @@ function UserContextProvider({ children }) {
         isLoading,
         errors,
         login,
+        logout,
     };
 
     return (

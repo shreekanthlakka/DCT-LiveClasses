@@ -65,7 +65,7 @@ const userValidationSchema = {
             options: function (val) {
                 if (!["recruiter", "candidate", "admin"].includes(val)) {
                     throw new Error(
-                        "user role should be either recuiter or candidate or admin"
+                        "user role should be either recruiter or candidate or admin"
                     );
                 }
                 return true;

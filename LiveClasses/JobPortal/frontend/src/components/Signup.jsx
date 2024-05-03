@@ -117,6 +117,27 @@ function Signup() {
         return <span style={{ color: "red", fontWeight: 600 }}>{err.msg}</span>;
     };
 
+    function handleEmailTaken() {
+        console.log("=====ONBLUR");
+        if (validator.isEmail(formData.email)) {
+            fetch(
+                `http://localhost:5000/api/v1/users/checkEmail?email=${formData.email}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-type": "application/json",
+                    },
+                }
+            )
+                .then((res) => res.json())
+                .then((data) =>
+                    data.isEmailRegistered
+                        ? null
+                        : (cliErrors.email = "email alteady taken")
+                );
+        }
+    }
+
     return (
         <div>
             <Form onSubmit={handleSubmit}>
@@ -140,6 +161,7 @@ function Signup() {
                         type="email"
                         value={formData.email}
                         onChange={handleChange}
+                        onBlur={handleEmailTaken}
                     />
                 </Row>
                 {errorMessages("email")}

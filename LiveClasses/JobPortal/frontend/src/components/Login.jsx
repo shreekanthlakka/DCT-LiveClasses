@@ -69,6 +69,7 @@ function Login() {
             .catch((err) => {
                 console.log(err);
                 localStorage.setItem("token", "");
+                setClientErrors({});
             });
     };
 

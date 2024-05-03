@@ -12,15 +12,13 @@ const router = express.Router();
 
 router
     .route("/profile")
+    .get(isLoggedIn, customRole(["candidate"]), getProfileDetails)
     .post(
         isLoggedIn,
         customRole(["candidate"]),
         checkSchema(candidateValidationSchema),
         createProfile
-    );
-router
-    .route("/profile")
-    .get(isLoggedIn, customRole(["candidate"]), getProfileDetails)
+    )
     .put(
         isLoggedIn,
         customRole(["candidate"]),

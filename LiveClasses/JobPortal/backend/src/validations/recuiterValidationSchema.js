@@ -1,4 +1,4 @@
-import Recuiter from "../models/recuiter.model.js";
+import Recuiter from "../models/recruiter.model.js";
 import { CustomError } from "../utils/customError.js";
 
 const recuiterValidationSchema = {

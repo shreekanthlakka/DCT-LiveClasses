@@ -1,5 +1,5 @@
 import { validationResult } from "express-validator";
-import Recuiter from "../models/recuiter.model.js";
+import Recuiter from "../models/recruiter.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { CustomError } from "../utils/customError.js";
 import { CustomResponse } from "../utils/customResponse.js";

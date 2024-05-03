@@ -43,10 +43,10 @@ app.use(morgan("combined", { stream: accessLogStream }));
 
 import users from "./routes/user.routes.js";
 import candidate from "./routes/candidate.routes.js";
-import recuiter from "./routes/recuiter.routes.js";
+import recruiter from "./routes/recuiter.routes.js";
 
 app.use("/api/v1/users", users);
 app.use("/api/v1/users/candidate", candidate);
-app.use("/api/v1/users/recuiter", recuiter);
+app.use("/api/v1/users/recruiter", recruiter);
 
 export default app;
